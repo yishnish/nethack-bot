@@ -1,3 +1,5 @@
+package screen;
+
 import interpreter.NethackScreenInterpreter;
 import interpreter.NoLinesScreenTrimmer;
 import level.NethackLevel;
@@ -5,6 +7,7 @@ import locations.Coordinates;
 import mapitems.DungeonThing;
 import org.junit.Before;
 import org.junit.Test;
+import screen.NethackScreen;
 import terminal.*;
 
 

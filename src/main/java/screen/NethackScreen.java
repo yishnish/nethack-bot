@@ -1,3 +1,5 @@
+package screen;
+
 import interpreter.NethackScreenInterpreter;
 import level.NethackLevel;
 import terminal.VTerminal;
