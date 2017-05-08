@@ -15,7 +15,12 @@ public class NethackScreen {
         this.screenInterpreter = screenInterpreter;
     }
 
-    public NethackLevel getLevel() {
-        return screenInterpreter.interpret(terminal.getScreenBuffer());
+    public NethackLevel getSuspectedNewAndStableLevel(long lastCheckTime, long minStableTime) {
+        long lastUpdateTime = terminal.getLastUpdateTime();
+        long unchangedFor = terminal.unchangedFor();
+        if (!(lastUpdateTime > lastCheckTime) || unchangedFor < minStableTime) {
+            return null;
+        }
+        return new NethackLevel(new char[1][1]);
     }
 }

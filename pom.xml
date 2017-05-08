@@ -10,11 +10,12 @@
 
     <properties>
         <junit.version>4.12</junit.version>
-        <mytelnet.version>1.0-SNAPSHOT</mytelnet.version>
+        <mytelnet.version>1.0.1-SNAPSHOT</mytelnet.version>
         <nethack-screen-interpreter.version>1.0.1-SNAPSHOT</nethack-screen-interpreter.version>
         <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
         <jacoco-maven-plugin.version>0.7.9</jacoco-maven-plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <mockito-all.version>2.0.2-beta</mockito-all.version>
     </properties>
 
     <build>
@@ -55,6 +56,12 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>${mockito-all.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
