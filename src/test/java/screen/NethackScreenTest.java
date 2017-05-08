@@ -1,15 +1,14 @@
 package screen;
 
 import command.CarriageReturnCommand;
+import command.CharacterWriteCommand;
 import interpreter.NethackScreenInterpreter;
 import interpreter.NoLinesScreenTrimmer;
-import level.NethackLevel;
-import locations.Coordinates;
-import mapitems.DungeonThing;
 import org.junit.Before;
 import org.junit.Test;
 import terminal.*;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -21,6 +20,7 @@ public class NethackScreenTest {
     VTerminal terminal;
     NethackScreen nethackScreen;
     NethackScreenInterpreter screenInterpreter;
+    TimePiece timePiece;
 
     @Before
     public void setUp(){
@@ -28,13 +28,11 @@ public class NethackScreenTest {
         terminal = new Vermont(1, 1, display);
         screenInterpreter = new NethackScreenInterpreter(new NoLinesScreenTrimmer());
         terminal.moveCursor(CursorPosition.HOME);
-        nethackScreen = new NethackScreen(terminal, screenInterpreter);
+        timePiece = mock(TimePiece.class);
     }
 
     @Test
     public void testGettingANethackLevelWhenTheTerminalUpdatedSinceTheLastCheckAndNoUpdatesHaveHappenedRecently() {
-        TimePiece timePiece = mock(TimePiece.class);
-
         final long safeInterval = 500L;
         final long lastCheckTime = 100000L;
         final long lastUpdatedTime = lastCheckTime + 1L;
@@ -43,15 +41,13 @@ public class NethackScreenTest {
         when(timePiece.getTimeMillis()).thenReturn(lastUpdatedTime).thenReturn(now);
         terminal = new Vermont(1, 1, display, timePiece);
         nethackScreen = new NethackScreen(terminal, screenInterpreter);
-        terminal.accept(new CarriageReturnCommand());
+        terminal.accept(new CharacterWriteCommand('+'));
 
         assertThat(nethackScreen.getSuspectedNewAndStableLevel(lastCheckTime, safeInterval), not(nullValue()));
     }
 
     @Test
     public void testYouDontGetANethackLevelWhenTheTerminalHasNotUpdatedSinceTheLastCheck() {
-        TimePiece timePiece = mock(TimePiece.class);
-
         final long safeInterval = 500L;
         final long lastCheckTime = 100000L;
         final long lastUpdatedTime = lastCheckTime;
@@ -68,8 +64,6 @@ public class NethackScreenTest {
 
     @Test
     public void testYouDontGetANethackLevelWhenTheTerminalHasUpdatedSinceTheLastCheckButMightStillBeChanging() {
-        TimePiece timePiece = mock(TimePiece.class);
-
         final long safeInterval = 500L;
         final long lastCheckTime = 100000L;
         final long lastUpdatedTime = lastCheckTime + 1;
@@ -82,6 +76,31 @@ public class NethackScreenTest {
         terminal.accept(new CarriageReturnCommand());
 
         assertThat(nethackScreen.getSuspectedNewAndStableLevel(lastCheckTime, safeInterval), nullValue());
+    }
+
+    @Test
+    public void testSuccessfullyGettingALevelReturnsALevelWithTheMostRecentChanges(){
+        final long safeInterval = 500L;
+        final long lastCheckTime = 1000L;
+        char[][] firstScreen = new char[][]{
+                {'@', '.'}
+        };
+
+        char[][] updatedScreen = new char[][]{
+                {'.', '@'}
+        };
+        terminal = mock(VTerminal.class);
+        nethackScreen = new NethackScreen(terminal, screenInterpreter);
+
+        when(terminal.getLastUpdateTime()).thenReturn(lastCheckTime + 1L);
+        when(terminal.unchangedFor()).thenReturn(safeInterval);
+        when(terminal.getScreenBuffer()).thenReturn(firstScreen).thenReturn(updatedScreen);
+
+        assertThat(nethackScreen.getSuspectedNewAndStableLevel(lastCheckTime, safeInterval),
+                equalTo(screenInterpreter.interpret(firstScreen)));
+
+        assertThat(nethackScreen.getSuspectedNewAndStableLevel(lastCheckTime, safeInterval),
+                equalTo(screenInterpreter.interpret(updatedScreen)));
     }
 
 }

@@ -21,6 +21,6 @@ public class NethackScreen {
         if (!(lastUpdateTime > lastCheckTime) || unchangedFor < minStableTime) {
             return null;
         }
-        return new NethackLevel(new char[1][1]);
+        return screenInterpreter.interpret(terminal.getScreenBuffer());
     }
 }
