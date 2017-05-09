@@ -1,5 +1,10 @@
 language: java
 jdk:
   - oraclejdk8
+before_install:
+  - pushd .
+  - cd $HOME && git clone --depth=50 --branch=master https://github.com/yishnish/mytelnet.git && cd mytelnet && mvn install
+  - cd $HOME && git clone --depth=50 --branch=master https://github.com/yishnish/nethack-screen-interpreter.git && cd nethack-screen-interpreter && mvn install
+  - popd
 after_success:
   - mvn clean test jacoco:report coveralls:report
