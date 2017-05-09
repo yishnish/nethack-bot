@@ -1,11 +1,15 @@
 package bot;
 
+import command.MoveDelta;
+import command.NethackCommand;
 import level.NethackLevel;
 import locations.Coordinates;
 import mapitems.DungeonThing;
+import network.MyTelnetNegotiator;
 import screen.NethackScreen;
 import terminal.TimePiece;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -49,11 +53,19 @@ public class NethackBot {
         this.timePiece = timePiece;
     }
 
-    public void getLevelFromScreen(NethackScreen nethackScreen) {
+    public NethackLevel getLevelFromScreen(NethackScreen nethackScreen) {
         NethackLevel level;
         while ((level = nethackScreen.getSuspectedNewAndStableLevel(lastRequestTimestamp,
                 TIME_UNTIL_LEVEL_CONSIDERED_STABLE)) == null) {
-            lastRequestTimestamp = timePiece.getTimeMillis();
         }
+        lastRequestTimestamp = timePiece.getTimeMillis();
+        return level;
+    }
+
+    public void makeMove(NethackLevel level, MyTelnetNegotiator telnetNegotiator) throws IOException {
+        Set<Coordinates> availableMoveLocations = getAvailableMoveLocations(level);
+        int randomElementPosition = (int) (Math.floor(availableMoveLocations.size() * Math.random()));
+        Coordinates moveTo = (Coordinates) Arrays.asList(availableMoveLocations.toArray()).get(randomElementPosition);
+        telnetNegotiator.send(NethackCommand.forDelta(MoveDelta.from(level.getHeroLocation()).to(moveTo)).getCommand());
     }
 }

@@ -1,21 +1,21 @@
 package bot;
 
+import command.NethackCommand;
 import interpreter.NethackScreenInterpreter;
 import interpreter.NoLinesScreenTrimmer;
 import level.NethackLevel;
 import locations.Coordinates;
 import mapitems.DungeonThing;
+import network.MyTelnetNegotiator;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InOrder;
-import org.mockito.Mockito;
 import screen.NethackScreen;
 import terminal.TimePiece;
 
+import java.io.IOException;
 import java.util.Set;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.*;
@@ -41,22 +41,21 @@ public class NethackBotTest {
         when(nethackScreen.getSuspectedNewAndStableLevel(anyLong(), anyLong()))
                 .thenReturn(null).thenReturn(new NethackLevel(new char[1][1]));
         NethackBot nethackBot = new NethackBot(timePiece);
-        nethackBot.getLevelFromScreen(nethackScreen);
+        NethackLevel level = nethackBot.getLevelFromScreen(nethackScreen);
         verify(nethackScreen, times(2)).getSuspectedNewAndStableLevel(anyLong(), anyLong());
+        assertThat(level, not(nullValue()));
     }
 
     @Test
-    public void nethackBotShouldOnlyAskForNethackLevelsThatAreCreatedAfterTheLastRequest() {
-        InOrder inOrder = Mockito.inOrder(nethackScreen);
+    public void nethackBotShouldOnlyAskForNethackLevelsThatAreCreatedAfterTheLastSuccessfulRequest() {
         when(nethackScreen.getSuspectedNewAndStableLevel(anyLong(), anyLong()))
                 .thenReturn(null).thenReturn(new NethackLevel(new char[1][1]));
-        when(timePiece.getTimeMillis()).thenReturn(1L).thenReturn(2L).thenReturn(3L);
+        when(timePiece.getTimeMillis()).thenReturn(1L).thenReturn(2L);
 
         NethackBot nethackBot = new NethackBot(timePiece);
         nethackBot.getLevelFromScreen(nethackScreen);
 
-        inOrder.verify(nethackScreen).getSuspectedNewAndStableLevel(0L, NethackBot.TIME_UNTIL_LEVEL_CONSIDERED_STABLE);
-        inOrder.verify(nethackScreen).getSuspectedNewAndStableLevel(1L, NethackBot.TIME_UNTIL_LEVEL_CONSIDERED_STABLE);
+        verify(nethackScreen, times(2)).getSuspectedNewAndStableLevel(0L, NethackBot.TIME_UNTIL_LEVEL_CONSIDERED_STABLE);
     }
 
     @Test
@@ -114,5 +113,24 @@ public class NethackBotTest {
             level.setThingAt(new Coordinates(0, 1), dungeonThing);
             assertThat(nethackBot.getAvailableMoveLocations(level).size(), equalTo(0));
         }
+    }
+
+    @Test
+    public void nethackBotMovesToAnAvailableLocation() throws IOException {
+        MyTelnetNegotiator telnetNegotiator = mock(MyTelnetNegotiator.class);
+
+        char[][] rightSpaceAvailable = new char[][]{{'@', '.'}};
+        char[][] belowSpaceAvailable = new char[][]{
+                {'@'},
+                {'.'}
+        };
+        NethackLevel spaceToRightLevel = screenInterpreter.interpret(rightSpaceAvailable);
+        NethackLevel spaceBelowLevel = screenInterpreter.interpret(belowSpaceAvailable);
+
+        nethackBot.makeMove(spaceToRightLevel, telnetNegotiator);
+        verify(telnetNegotiator).send(NethackCommand.MOVE_RIGHT.getCommand());
+
+        nethackBot.makeMove(spaceBelowLevel, telnetNegotiator);
+        verify(telnetNegotiator).send(NethackCommand.MOVE_DOWN.getCommand());
     }
 }
