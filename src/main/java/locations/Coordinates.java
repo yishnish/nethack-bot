@@ -1,5 +1,7 @@
 package locations;
 
+import command.MoveDelta;
+
 public class Coordinates {
     public static final Coordinates UNKNOWN = new Coordinates(-1, -1);
     private final int row;
@@ -16,6 +18,10 @@ public class Coordinates {
 
     public int getColumn() {
         return column;
+    }
+
+    public MoveDelta to(Coordinates destination) {
+        return new MoveDelta(destination.getRow() - this.row, destination.getColumn() - this.column);
     }
 
     @Override

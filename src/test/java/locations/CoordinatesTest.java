@@ -1,5 +1,6 @@
 package locations;
 
+import command.MoveDelta;
 import org.junit.Test;
 
 import java.util.HashSet;
@@ -46,5 +47,68 @@ public class CoordinatesTest {
         assertThat(distinctCoordinates.size(), equalTo(2));
         assertThat(distinctCoordinates, hasItem(coordinates1));
         assertThat(distinctCoordinates, hasItem(coordinates2));
+    }
+    @Test
+    public void testCalculatingPositionChangeForMovingOneColumnToTheLeft() {
+        Coordinates start = new Coordinates(1, 1);
+        Coordinates end = new Coordinates(1, 0);
+
+        assertThat(start.to(end), equalTo(new MoveDelta(0, -1)));
+    }
+
+    @Test
+    public void testCalculatingDeltasForMovingOneColumnToTheRight() {
+        Coordinates start = new Coordinates(1, 1);
+        Coordinates end = new Coordinates(1, 2);
+
+        assertThat(start.to(end), equalTo(new MoveDelta(0, 1)));
+    }
+
+    @Test
+    public void testCalculatingDeltasForMovingOneColumnToTheUp() {
+        Coordinates start = new Coordinates(1, 0);
+        Coordinates end = new Coordinates(0, 0);
+
+        assertThat(start.to(end), equalTo(new MoveDelta(-1, 0)));
+    }
+
+    @Test
+    public void testCalculatingDeltasForMovingOneColumnDown() {
+        Coordinates start = new Coordinates(1, 0);
+        Coordinates end = new Coordinates(2, 0);
+
+        assertThat(start.to(end), equalTo(new MoveDelta(1, 0)));
+    }
+
+    @Test
+    public void testCalculatingDeltasForMovingDiagonalUpLeft() {
+        Coordinates start = new Coordinates(1, 1);
+        Coordinates end = new Coordinates(0, 0);
+
+        assertThat(start.to(end), equalTo(new MoveDelta(-1, -1)));
+    }
+
+    @Test
+    public void testCalculatingDeltasForMovingDiagonalUpRight() {
+        Coordinates start = new Coordinates(1, 1);
+        Coordinates end = new Coordinates(0, 2);
+
+        assertThat(start.to(end), equalTo(new MoveDelta(-1, 1)));
+    }
+
+    @Test
+    public void testCalculatingDeltasForMovingDiagonalDownLeft() {
+        Coordinates start = new Coordinates(1, 1);
+        Coordinates end = new Coordinates(2, 0);
+
+        assertThat(start.to(end), equalTo(new MoveDelta(1, -1)));
+    }
+
+    @Test
+    public void testCalculatingDeltasForMovingDiagonalDownRight() {
+        Coordinates start = new Coordinates(1, 1);
+        Coordinates end = new Coordinates(2, 2);
+
+        assertThat(start.to(end), equalTo(new MoveDelta(1, 1)));
     }
 }

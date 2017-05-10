@@ -1,6 +1,5 @@
 package bot;
 
-import command.MoveDelta;
 import command.NethackCommand;
 import level.NethackLevel;
 import locations.Coordinates;
@@ -49,6 +48,6 @@ public class NethackBot {
         int randomElementPosition = (int) (Math.floor(availableMoveLocations.size() * Math.random()));
         Coordinates moveTo = (Coordinates) Arrays.asList(availableMoveLocations.toArray()).get(randomElementPosition);
 
-        return NethackCommand.forDelta(MoveDelta.from(level.getHeroLocation()).to(moveTo));
+        return NethackCommand.forDelta(level.getHeroLocation().to(moveTo));
     }
 }
