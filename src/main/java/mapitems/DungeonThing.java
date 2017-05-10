@@ -15,6 +15,8 @@ public enum DungeonThing {
     EMPTY_WHAT_IS_THIS_REALLY(' '),
     UNKNOWN(Character.MIN_VALUE),
     LIZARDO(':'),
+    BAT('B'),
+    YELLOW_LIGHT('y'),
     FELINE('f');
 
     private static Map<Character, DungeonThing> converter = Collections.unmodifiableMap(initializeMapping());

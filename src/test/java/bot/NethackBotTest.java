@@ -1,6 +1,8 @@
 package bot;
 
 import command.NethackCommand;
+import movement.PrioritizeNewLocationsFilter;
+import movement.SingleSpaceCorporealMovementStrategy;
 import screenbufferinterpreter.NethackScreenBufferInterpreter;
 import screenbufferinterpreter.NoLinesScreenTrimmer;
 import level.NethackLevel;
@@ -63,5 +65,21 @@ public class NethackBotTest {
         NethackCommand nextMove = nethackBot.getNextMove(level);
 
         assertThat(nextMove, not(nullValue()));
+    }
+
+    @Test
+    public void nethackBotShouldPreferMovingToLocationsItHasVisitedLeast(){
+        NethackLevel level = screenInterpreter.interpret(new char[][]{
+                {'@', '.'},
+                {'.', '.'},
+        });
+
+        PrioritizeNewLocationsFilter movementFilter = new PrioritizeNewLocationsFilter();
+        movementFilter.markVisited(new Coordinates(0, 1));
+        movementFilter.markVisited(new Coordinates(1, 0));
+        nethackBot = new NethackBot(timePiece, new SingleSpaceCorporealMovementStrategy(), movementFilter);
+        NethackCommand nextMove = nethackBot.getNextMove(level);
+
+        assertThat(nextMove, equalTo(NethackCommand.MOVE_DOWN_RIGHT));
     }
 }
