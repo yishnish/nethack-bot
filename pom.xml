@@ -11,11 +11,9 @@
     <properties>
         <junit.version>4.12</junit.version>
         <mytelnet.version>1.0.1-SNAPSHOT</mytelnet.version>
-        <nethack-screen-interpreter.version>1.0.1-SNAPSHOT</nethack-screen-interpreter.version>
-        <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
         <jacoco-maven-plugin.version>0.7.9</jacoco-maven-plugin.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <mockito-all.version>2.0.2-beta</mockito-all.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <build>
@@ -48,11 +46,6 @@
             <groupId>com.yishnish.mytelnet</groupId>
             <artifactId>mytelnet</artifactId>
             <version>${mytelnet.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.yishnish.nethack-screen-interpreter</groupId>
-            <artifactId>nethack-screen-interpreter</artifactId>
-            <version>${nethack-screen-interpreter.version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

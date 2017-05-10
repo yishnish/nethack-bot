@@ -1,7 +1,7 @@
 package movement;
 
-import interpreter.NethackScreenInterpreter;
-import interpreter.NoLinesScreenTrimmer;
+import screenbufferinterpreter.NethackScreenBufferInterpreter;
+import screenbufferinterpreter.NoLinesScreenTrimmer;
 import level.NethackLevel;
 import locations.Coordinates;
 import mapitems.DungeonThing;
@@ -20,11 +20,11 @@ public class SingleSpaceCorporealMovementStrategyTest {
 
     SingleSpaceCorporealMovementStrategy movementStrategy;
 
-    NethackScreenInterpreter screenInterpreter;
+    NethackScreenBufferInterpreter screenInterpreter;
 
     @Before
     public void setUp() {
-        screenInterpreter = new NethackScreenInterpreter(new NoLinesScreenTrimmer());
+        screenInterpreter = new NethackScreenBufferInterpreter(new NoLinesScreenTrimmer());
         movementStrategy = new SingleSpaceCorporealMovementStrategy();
     }
 

@@ -1,8 +1,8 @@
 package bot;
 
 import command.NethackCommand;
-import interpreter.NethackScreenInterpreter;
-import interpreter.NoLinesScreenTrimmer;
+import screenbufferinterpreter.NethackScreenBufferInterpreter;
+import screenbufferinterpreter.NoLinesScreenTrimmer;
 import level.NethackLevel;
 import locations.Coordinates;
 import org.junit.Before;
@@ -21,14 +21,14 @@ public class NethackBotTest {
 
     NethackScreen nethackScreen;
     TimePiece timePiece;
-    private NethackScreenInterpreter screenInterpreter;
+    private NethackScreenBufferInterpreter screenInterpreter;
 
     @Before
     public void setUp() {
         nethackScreen = mock(NethackScreen.class);
         timePiece = mock(TimePiece.class);
         nethackBot = new NethackBot(timePiece);
-        screenInterpreter = new NethackScreenInterpreter(new NoLinesScreenTrimmer());
+        screenInterpreter = new NethackScreenBufferInterpreter(new NoLinesScreenTrimmer());
     }
 
     @Test

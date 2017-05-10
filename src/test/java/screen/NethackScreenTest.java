@@ -2,8 +2,8 @@ package screen;
 
 import command.CarriageReturnCommand;
 import command.CharacterWriteCommand;
-import interpreter.NethackScreenInterpreter;
-import interpreter.NoLinesScreenTrimmer;
+import screenbufferinterpreter.NethackScreenBufferInterpreter;
+import screenbufferinterpreter.NoLinesScreenTrimmer;
 import org.junit.Before;
 import org.junit.Test;
 import terminal.*;
@@ -19,14 +19,14 @@ public class NethackScreenTest {
     Display display;
     VTerminal terminal;
     NethackScreen nethackScreen;
-    NethackScreenInterpreter screenInterpreter;
+    NethackScreenBufferInterpreter screenInterpreter;
     TimePiece timePiece;
 
     @Before
     public void setUp(){
         display = new BlankDisplay();
         terminal = new Vermont(1, 1, display);
-        screenInterpreter = new NethackScreenInterpreter(new NoLinesScreenTrimmer());
+        screenInterpreter = new NethackScreenBufferInterpreter(new NoLinesScreenTrimmer());
         terminal.moveCursor(CursorPosition.HOME);
         timePiece = mock(TimePiece.class);
     }

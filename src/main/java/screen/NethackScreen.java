@@ -1,6 +1,6 @@
 package screen;
 
-import interpreter.NethackScreenInterpreter;
+import screenbufferinterpreter.NethackScreenBufferInterpreter;
 import level.NethackLevel;
 import terminal.VTerminal;
 
@@ -8,9 +8,9 @@ public class NethackScreen {
 
     private final VTerminal terminal;
 
-    private final NethackScreenInterpreter screenInterpreter;
+    private final NethackScreenBufferInterpreter screenInterpreter;
 
-    public NethackScreen(VTerminal terminal, NethackScreenInterpreter screenInterpreter) {
+    public NethackScreen(VTerminal terminal, NethackScreenBufferInterpreter screenInterpreter) {
         this.terminal = terminal;
         this.screenInterpreter = screenInterpreter;
     }
