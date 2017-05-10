@@ -12,8 +12,8 @@ import java.util.Set;
 public class SingleSpaceCorporealMovementStrategy implements MovementStrategy {
     private static final int BASIC_MOVE_DX = 1;
     private static final int BASIC_MOVE_DY = 1;
-    private static final List<DungeonThing> SAFE_MOVE_SPOTS =
-            Arrays.asList(DungeonThing.VACANT, DungeonThing.STAIRWAY_UP);
+    public static final List<DungeonThing> SAFE_MOVE_SPOTS =
+            Arrays.asList(DungeonThing.VACANT, DungeonThing.STAIRWAY_UP, DungeonThing.HALLWAY);
 
     public Set<Coordinates> getAvailableMoveLocations(NethackLevel level) {
         Coordinates heroLocation = level.getHeroLocation();

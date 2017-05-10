@@ -8,6 +8,8 @@ import mapitems.DungeonThing;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -80,6 +82,17 @@ public class SingleSpaceCorporealMovementStrategyTest {
         for (DungeonThing dungeonThing : dungeonThings) {
             level.setThingAt(new Coordinates(0, 1), dungeonThing);
             assertThat(movementStrategy.getAvailableMoveLocations(level).size(), equalTo(0));
+        }
+    }
+
+    @Test
+    public void itShouldConsiderMovingToMovableSpacesAsDefinedByTheStrategy() {
+        char[][] dungeonMap = new char[][]{{'@', '.'}};
+        NethackLevel level = screenInterpreter.interpret(dungeonMap);
+        Set<Coordinates> expected = new HashSet<Coordinates>(Arrays.asList(new Coordinates(0, 1)));
+        for (DungeonThing dungeonThing : SingleSpaceCorporealMovementStrategy.SAFE_MOVE_SPOTS) {
+            level.setThingAt(new Coordinates(0, 1), dungeonThing);
+            assertThat(movementStrategy.getAvailableMoveLocations(level), equalTo(expected));
         }
     }
 }
