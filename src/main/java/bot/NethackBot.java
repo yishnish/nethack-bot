@@ -6,11 +6,9 @@ import level.NethackLevel;
 import locations.Coordinates;
 import movement.MovementStrategy;
 import movement.SingleSpaceCorporealMovementStrategy;
-import network.MyTelnetNegotiator;
 import screen.NethackScreen;
 import terminal.TimePiece;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Set;
 
@@ -46,10 +44,11 @@ public class NethackBot {
         return level;
     }
 
-    public void makeMove(NethackLevel level, MyTelnetNegotiator telnetNegotiator) throws IOException {
+    public NethackCommand getNextMove(NethackLevel level){
         Set<Coordinates> availableMoveLocations = getAvailableMoveLocations(level);
         int randomElementPosition = (int) (Math.floor(availableMoveLocations.size() * Math.random()));
         Coordinates moveTo = (Coordinates) Arrays.asList(availableMoveLocations.toArray()).get(randomElementPosition);
-        telnetNegotiator.send(NethackCommand.forDelta(MoveDelta.from(level.getHeroLocation()).to(moveTo)).getCommand());
+
+        return NethackCommand.forDelta(MoveDelta.from(level.getHeroLocation()).to(moveTo));
     }
 }
