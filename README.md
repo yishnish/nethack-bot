@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/yishnish/nethack-bot.svg?branch=master)](https://travis-ci.org/yishnish/nethack-bot)    [![Coverage Status](https://coveralls.io/repos/github/yishnish/nethack-bot/badge.svg?branch=master)](https://coveralls.io/github/yishnish/nethack-bot?branch=master)
+[![Build Status](https://travis-ci.org/yishnish/nethack-bot.svg?branch=master)](https://travis-ci.org/yishnish/nethack-bot)    [![codecov](https://codecov.io/gh/yishnish/nethack-bot/branch/master/graph/badge.svg)](https://codecov.io/gh/yishnish/nethack-bot)
 
 More to come...
 
