@@ -50,7 +50,7 @@ public class NethackScreenTest {
     public void testYouDontGetANethackLevelWhenTheTerminalHasNotUpdatedSinceTheLastCheck() {
         final long safeInterval = 500L;
         final long lastCheckTime = 100000L;
-        final long lastUpdatedTime = lastCheckTime;
+        final long lastUpdatedTime = lastCheckTime - 1;
         final long now = lastUpdatedTime + safeInterval;
 
         when(timePiece.getTimeMillis()).thenReturn(lastUpdatedTime).thenReturn(now);
@@ -60,6 +60,22 @@ public class NethackScreenTest {
         terminal.accept(new CarriageReturnCommand());
 
         assertThat(nethackScreen.getSuspectedNewAndStableLevel(lastCheckTime, safeInterval), nullValue());
+    }
+
+    @Test
+    public void testYouGetANethackLevelWhenTheTerminalUpdatedAtTheSameTimeYouMadeYourLastCheck() {
+        final long safeInterval = 500L;
+        final long lastCheckTime = 100000L;
+        final long lastUpdatedTime = lastCheckTime;
+        final long now = lastUpdatedTime + safeInterval;
+
+        when(timePiece.getTimeMillis()).thenReturn(lastUpdatedTime).thenReturn(now);
+        terminal = new Vermont(1, 1, display, timePiece);
+        nethackScreen = new NethackScreen(terminal, screenInterpreter);
+
+        terminal.accept(new CarriageReturnCommand());
+
+        assertThat(nethackScreen.getSuspectedNewAndStableLevel(lastCheckTime, safeInterval), not(nullValue()));
     }
 
     @Test
