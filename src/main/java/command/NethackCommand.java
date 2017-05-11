@@ -13,7 +13,8 @@ public enum NethackCommand {
     MOVE_DOWN_RIGHT(new MoveDelta(1, 1), "n"),
     MOVE_UP_LEFT(new MoveDelta(-1, -1), "y"),
     MOVE_UP_RIGHT(new MoveDelta(-1, 1), "u"),
-    MOVE_DOWN_LEFT(new MoveDelta(1, -1), "b");
+    MOVE_DOWN_LEFT(new MoveDelta(1, -1), "b"),
+    WAIT(new MoveDelta(0, 0), ".");
 
     private final MoveDelta moveDelta;
     private final String command;

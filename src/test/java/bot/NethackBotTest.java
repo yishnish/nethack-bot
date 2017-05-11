@@ -82,4 +82,13 @@ public class NethackBotTest {
 
         assertThat(nextMove, equalTo(NethackCommand.MOVE_DOWN_RIGHT));
     }
+
+    @Test
+    public void ifThereIsNowhereToMoveNethackBotWillWaitATurn(){
+        NethackLevel level = screenInterpreter.interpret(new char[][]{
+                {'@', '+'}
+        });
+
+        assertThat(nethackBot.getNextMove(level), equalTo(NethackCommand.WAIT));
+    }
 }

@@ -60,6 +60,9 @@ public class NethackBot {
     public NethackCommand getNextMove(NethackLevel level){
         updateVisitedLocationsWithCurrentLocation(level);
         Set<Coordinates> availableMoveLocations = getAvailableMoveLocations(level);
+        if (availableMoveLocations.size() == 0) {
+            return NethackCommand.WAIT;
+        }
         for (ActionFilter<Coordinates> filter : movementFilters) {
             availableMoveLocations = filter.filter(availableMoveLocations);
         }
