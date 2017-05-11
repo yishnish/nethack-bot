@@ -13,7 +13,9 @@ public class SingleSpaceCorporealMovementStrategy implements MovementStrategy {
     private static final int BASIC_MOVE_DX = 1;
     private static final int BASIC_MOVE_DY = 1;
     public static final List<DungeonThing> SAFE_MOVE_SPOTS =
-            Arrays.asList(DungeonThing.VACANT, DungeonThing.STAIRWAY_UP, DungeonThing.HALLWAY);
+            Arrays.asList(DungeonThing.VACANT, DungeonThing.STAIRWAY_UP,
+                    DungeonThing.HALLWAY, DungeonThing.GOLD, DungeonThing.FOOD,
+                DungeonThing.WAND, DungeonThing.SCROLL);
 
     public Set<Coordinates> getAvailableMoveLocations(NethackLevel level) {
         Coordinates heroLocation = level.getHeroLocation();
