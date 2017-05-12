@@ -68,19 +68,38 @@ public class NethackBotTest {
     }
 
     @Test
-    public void nethackBotShouldPreferMovingToLocationsItHasVisitedLeast(){
+    public void setNethackBotCanUseAMovementFilter(){
         NethackLevel level = screenInterpreter.interpret(new char[][]{
                 {'@', '.'},
                 {'.', '.'},
         });
 
         PrioritizeNewLocationsFilter movementFilter = new PrioritizeNewLocationsFilter();
-        movementFilter.markVisited(new Coordinates(0, 1));
-        movementFilter.markVisited(new Coordinates(1, 0));
+        Coordinates topRight = new Coordinates(0, 1);
+        Coordinates bottomLeft = new Coordinates(1, 0);
+        Coordinates bottomRight = new Coordinates(1, 1);
+
+        /**
+         *  [@, 1]
+         *  [1, 0]
+         */
+        movementFilter.markVisited(topRight);
+        movementFilter.markVisited(bottomLeft);
+
         nethackBot = new NethackBot(timePiece, new SingleSpaceCorporealMovementStrategy(), movementFilter);
         NethackCommand nextMove = nethackBot.getNextMove(level);
 
         assertThat(nextMove, equalTo(NethackCommand.MOVE_DOWN_RIGHT));
+
+        /**
+         *  [@, 1]
+         *  [2, 2]
+         */
+        movementFilter.markVisited(bottomRight);
+        movementFilter.markVisited(bottomRight);
+        movementFilter.markVisited(bottomLeft);
+
+        assertThat(nethackBot.getNextMove(level), equalTo(NethackCommand.MOVE_RIGHT));
     }
 
     @Test

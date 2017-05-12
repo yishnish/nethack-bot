@@ -12,6 +12,7 @@ public enum DungeonThing {
     STAIRWAY_UP('<'),
     CLOSED_DOOR('+'),
     HALLWAY('#'),
+    BOULDER('`'),
     GOLD('$'),
     FOOD('%'),
     RING('='),
