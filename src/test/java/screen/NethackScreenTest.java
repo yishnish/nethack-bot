@@ -21,7 +21,8 @@ public class NethackScreenTest {
     VTerminal terminal;
     NethackScreen nethackScreen;
     NethackScreenBufferInterpreter screenInterpreter;
-    TimePiece timePiece;
+    TimePiece terminalTimePiece;
+    TimePiece screenTimePiece;
 
     @Before
     public void setUp(){
@@ -29,7 +30,8 @@ public class NethackScreenTest {
         terminal = new Vermont(1, 1, display);
         screenInterpreter = new NethackScreenBufferInterpreter(new NoLinesScreenTrimmer());
         terminal.moveCursor(Coordinates.HOME);
-        timePiece = mock(TimePiece.class);
+        terminalTimePiece = mock(TimePiece.class);
+        screenTimePiece = mock(TimePiece.class);
     }
 
     @Test
@@ -39,9 +41,10 @@ public class NethackScreenTest {
         final long lastUpdatedTime = lastCheckTime + 1L;
         final long now = lastUpdatedTime + safeInterval;
 
-        when(timePiece.getTimeMillis()).thenReturn(lastUpdatedTime).thenReturn(now);
-        terminal = new Vermont(1, 1, display, timePiece);
-        nethackScreen = new NethackScreen(terminal, screenInterpreter);
+        when(terminalTimePiece.getTimeMillis()).thenReturn(lastUpdatedTime).thenReturn(now);
+        when(screenTimePiece.getTimeMillis()).thenReturn(now);
+        terminal = new Vermont(1, 1, display, terminalTimePiece);
+        nethackScreen = new NethackScreen(terminal, screenInterpreter, screenTimePiece);
         terminal.accept(new CharacterWriteCommand('+'));
 
         assertThat(nethackScreen.getSuspectedNewAndStableLevel(lastCheckTime, safeInterval), not(nullValue()));
@@ -54,9 +57,9 @@ public class NethackScreenTest {
         final long lastUpdatedTime = lastCheckTime - 1;
         final long now = lastUpdatedTime + safeInterval;
 
-        when(timePiece.getTimeMillis()).thenReturn(lastUpdatedTime).thenReturn(now);
-        terminal = new Vermont(1, 1, display, timePiece);
-        nethackScreen = new NethackScreen(terminal, screenInterpreter);
+        when(terminalTimePiece.getTimeMillis()).thenReturn(lastUpdatedTime).thenReturn(now);
+        terminal = new Vermont(1, 1, display, terminalTimePiece);
+        nethackScreen = new NethackScreen(terminal, screenInterpreter, screenTimePiece);
 
         terminal.accept(new CarriageReturnCommand());
 
@@ -70,9 +73,10 @@ public class NethackScreenTest {
         final long lastUpdatedTime = lastCheckTime;
         final long now = lastUpdatedTime + safeInterval;
 
-        when(timePiece.getTimeMillis()).thenReturn(lastUpdatedTime).thenReturn(now);
-        terminal = new Vermont(1, 1, display, timePiece);
-        nethackScreen = new NethackScreen(terminal, screenInterpreter);
+        when(terminalTimePiece.getTimeMillis()).thenReturn(lastUpdatedTime).thenReturn(now);
+        when(screenTimePiece.getTimeMillis()).thenReturn(lastCheckTime + safeInterval);
+        terminal = new Vermont(1, 1, display, terminalTimePiece);
+        nethackScreen = new NethackScreen(terminal, screenInterpreter, screenTimePiece);
 
         terminal.accept(new CarriageReturnCommand());
 
@@ -86,9 +90,9 @@ public class NethackScreenTest {
         final long lastUpdatedTime = lastCheckTime + 1;
         final long now = lastUpdatedTime + safeInterval - 1;
 
-        when(timePiece.getTimeMillis()).thenReturn(lastUpdatedTime).thenReturn(now);
-        terminal = new Vermont(1, 1, display, timePiece);
-        nethackScreen = new NethackScreen(terminal, screenInterpreter);
+        when(terminalTimePiece.getTimeMillis()).thenReturn(lastUpdatedTime).thenReturn(now);
+        terminal = new Vermont(1, 1, display, terminalTimePiece);
+        nethackScreen = new NethackScreen(terminal, screenInterpreter, screenTimePiece);
 
         terminal.accept(new CarriageReturnCommand());
 
@@ -98,25 +102,30 @@ public class NethackScreenTest {
     @Test
     public void testSuccessfullyGettingALevelReturnsALevelWithTheMostRecentChanges(){
         final long safeInterval = 500L;
-        final long lastCheckTime = 1000L;
+        final long firstUpdateTime = 1000L;
+        final long secondUpdateTime = 2000L;
+
         ScreenBuffer firstScreen = new ScreenBuffer(new char[][]{
                 {'@', '.'}
-        });
+        }, new BufferMetadata(firstUpdateTime));
 
         ScreenBuffer updatedScreen = new ScreenBuffer(new char[][]{
                 {'.', '@'}
-        });
+        }, new BufferMetadata(secondUpdateTime));
+
         terminal = mock(VTerminal.class);
-        nethackScreen = new NethackScreen(terminal, screenInterpreter);
+        nethackScreen = new NethackScreen(terminal, screenInterpreter, screenTimePiece);
+        when(terminal.getScreenBuffer()).thenReturn(firstScreen).thenReturn(firstScreen).thenReturn(updatedScreen);
 
-        when(terminal.getLastUpdateTime()).thenReturn(lastCheckTime + 1L);
-        when(terminal.unchangedFor()).thenReturn(safeInterval);
-        when(terminal.getScreenBuffer()).thenReturn(firstScreen).thenReturn(updatedScreen);
+        when(screenTimePiece.getTimeMillis()).thenReturn(1500L).thenReturn(1501L).thenReturn(2500L);
 
-        assertThat(nethackScreen.getSuspectedNewAndStableLevel(lastCheckTime, safeInterval),
+        assertThat(nethackScreen.getSuspectedNewAndStableLevel(firstUpdateTime, safeInterval),
                 equalTo(screenInterpreter.interpret(firstScreen)));
 
-        assertThat(nethackScreen.getSuspectedNewAndStableLevel(lastCheckTime, safeInterval),
+        assertThat(nethackScreen.getSuspectedNewAndStableLevel(firstUpdateTime + 1, safeInterval),
+                equalTo(null));
+
+        assertThat(nethackScreen.getSuspectedNewAndStableLevel(secondUpdateTime, safeInterval),
                 equalTo(screenInterpreter.interpret(updatedScreen)));
     }
 

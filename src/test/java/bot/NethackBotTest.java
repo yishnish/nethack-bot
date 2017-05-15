@@ -108,10 +108,9 @@ public class NethackBotTest {
 
     @Test
     public void ifThereIsNowhereToMoveNethackBotWillWaitATurn(){
-        char[][] screenData = {
+        NethackLevel level = screenInterpreter.interpret(new ScreenBuffer(new char[][]{
                 {'@', '+'}
-        };
-        NethackLevel level = screenInterpreter.interpret(new ScreenBuffer(screenData));
+        }));
 
         assertThat(nethackBot.getNextMove(level), equalTo(NethackCommand.WAIT));
     }
