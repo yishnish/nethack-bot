@@ -2,6 +2,7 @@ package screen;
 
 import command.CarriageReturnCommand;
 import command.CharacterWriteCommand;
+import locations.Coordinates;
 import screenbufferinterpreter.NethackScreenBufferInterpreter;
 import screenbufferinterpreter.NoLinesScreenTrimmer;
 import org.junit.Before;
@@ -27,7 +28,7 @@ public class NethackScreenTest {
         display = new BlankDisplay();
         terminal = new Vermont(1, 1, display);
         screenInterpreter = new NethackScreenBufferInterpreter(new NoLinesScreenTrimmer());
-        terminal.moveCursor(CursorPosition.HOME);
+        terminal.moveCursor(Coordinates.HOME);
         timePiece = mock(TimePiece.class);
     }
 

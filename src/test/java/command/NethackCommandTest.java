@@ -1,5 +1,6 @@
 package command;
 
+import locations.MoveDelta;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
