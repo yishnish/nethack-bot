@@ -3,6 +3,7 @@ package screenbufferinterpreter;
 import level.NethackLevel;
 import locations.Coordinates;
 import mapitems.DungeonThing;
+import terminal.ScreenBuffer;
 
 public class NethackScreenBufferInterpreter {
 
@@ -16,8 +17,8 @@ public class NethackScreenBufferInterpreter {
         this.screenTrimmer = screenTrimmerStrategy;
     }
 
-    public NethackLevel interpret(char[][] screenBuffer) {
-        char[][] trimmedScreenBuffer = screenTrimmer.trim(screenBuffer);
+    public NethackLevel interpret(ScreenBuffer screenBuffer) {
+        char[][] trimmedScreenBuffer = screenTrimmer.trim(screenBuffer.getScreenData());
         NethackLevel level = new NethackLevel(trimmedScreenBuffer);
         Coordinates heroLocation = getHeroLocation(trimmedScreenBuffer);
         for (int i = 0; i < trimmedScreenBuffer.length; i++) {

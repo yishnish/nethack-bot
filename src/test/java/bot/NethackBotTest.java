@@ -10,6 +10,7 @@ import locations.Coordinates;
 import org.junit.Before;
 import org.junit.Test;
 import screen.NethackScreen;
+import terminal.ScreenBuffer;
 import terminal.TimePiece;
 
 import static org.hamcrest.CoreMatchers.*;
@@ -55,13 +56,15 @@ public class NethackBotTest {
 
     @Test
     public void nethackBotCanChooseLocationsToMoveTo() {
-        NethackLevel level = screenInterpreter.interpret(new char[][]{{'@', '.'}});
+        ScreenBuffer screenBuffer = new ScreenBuffer(new char[][]{{'@', '.'}});
+        NethackLevel level = screenInterpreter.interpret(screenBuffer);
         assertThat(nethackBot.getAvailableMoveLocations(level), hasItem(new Coordinates(0, 1)));
     }
 
     @Test
     public void givenALevelYouShouldBeAbleToAskNethackBotForTheNextMoveItWantsToMake(){
-        NethackLevel level = screenInterpreter.interpret(new char[][]{{'@', '.'}});
+        ScreenBuffer screen = new ScreenBuffer(new char[][]{{'@', '.'}});
+        NethackLevel level = screenInterpreter.interpret(screen);
         NethackCommand nextMove = nethackBot.getNextMove(level);
 
         assertThat(nextMove, not(nullValue()));
@@ -69,10 +72,11 @@ public class NethackBotTest {
 
     @Test
     public void setNethackBotCanUseAMovementFilter(){
-        NethackLevel level = screenInterpreter.interpret(new char[][]{
+        ScreenBuffer screenBuffer = new ScreenBuffer(new char[][]{
                 {'@', '.'},
                 {'.', '.'},
         });
+        NethackLevel level = screenInterpreter.interpret(screenBuffer);
 
         PrioritizeNewLocationsFilter movementFilter = new PrioritizeNewLocationsFilter();
         Coordinates topRight = new Coordinates(0, 1);
@@ -104,9 +108,10 @@ public class NethackBotTest {
 
     @Test
     public void ifThereIsNowhereToMoveNethackBotWillWaitATurn(){
-        NethackLevel level = screenInterpreter.interpret(new char[][]{
+        char[][] screenData = {
                 {'@', '+'}
-        });
+        };
+        NethackLevel level = screenInterpreter.interpret(new ScreenBuffer(screenData));
 
         assertThat(nethackBot.getNextMove(level), equalTo(NethackCommand.WAIT));
     }

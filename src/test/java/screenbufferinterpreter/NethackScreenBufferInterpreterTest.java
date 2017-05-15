@@ -6,6 +6,7 @@ import mapitems.DungeonThing;
 import org.hamcrest.MatcherAssert;
 import org.junit.Before;
 import org.junit.Test;
+import terminal.ScreenBuffer;
 
 import static mapitems.DungeonThing.*;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -21,56 +22,56 @@ public class NethackScreenBufferInterpreterTest {
 
     @Test
     public void testSetsTheHeroLocationExplicitlyOnTheLevel() {
-        NethackLevel level = interpreter.interpret(new char[][]{{'@'}});
+        NethackLevel level = interpreter.interpret(new ScreenBuffer(new char[][]{{'@'}}));
 
         MatcherAssert.assertThat(level.getHeroLocation(), equalTo(new Coordinates(0, 0)));
     }
 
     @Test
     public void testAddsAMarkerForVacantSpacesOnTheLevelMap() {
-        NethackLevel level = interpreter.interpret(new char[][]{{'.'}});
+        NethackLevel level = interpreter.interpret(new ScreenBuffer(new char[][]{{'.'}}));
 
         MatcherAssert.assertThat(level.thingAt(new Coordinates(0, 0)), equalTo(VACANT));
     }
 
     @Test
     public void testMarksHeroLocationAsUnknownIfItCannotBeFound() {
-        NethackLevel level = interpreter.interpret(new char[][]{{'.'}});
+        NethackLevel level = interpreter.interpret(new ScreenBuffer(new char[][]{{'.'}}));
 
         MatcherAssert.assertThat(level.getHeroLocation(), equalTo(Coordinates.UNKNOWN));
     }
 
     @Test
     public void testAddsAMarkerForTheHeroOnTheLevelMap() {
-        NethackLevel level = interpreter.interpret(new char[][]{{'@'}});
+        NethackLevel level = interpreter.interpret(new ScreenBuffer(new char[][]{{'@'}}));
 
         MatcherAssert.assertThat(level.thingAt(new Coordinates(0, 0)), equalTo(HERO));
     }
 
     @Test
     public void testAddsAMarkerForHorizontalWallsOnTheLevelMap() {
-        NethackLevel level = interpreter.interpret(new char[][]{{'-'}});
+        NethackLevel level = interpreter.interpret(new ScreenBuffer(new char[][]{{'-'}}));
 
         MatcherAssert.assertThat(level.thingAt(new Coordinates(0, 0)), equalTo(DungeonThing.HORIZONTAL_WALL));
     }
 
     @Test
     public void testAddsAMarkerForVerticalWallsOnTheLevelMap() {
-        NethackLevel level = interpreter.interpret(new char[][]{{'|'}});
+        NethackLevel level = interpreter.interpret(new ScreenBuffer(new char[][]{{'|'}}));
 
         MatcherAssert.assertThat(level.thingAt(new Coordinates(0, 0)), equalTo(VERTICAL_WALL));
     }
 
     @Test
     public void testAddsAMarkerForStairwayUpOnTheLevelMap() {
-        NethackLevel level = interpreter.interpret(new char[][]{{'<'}});
+        NethackLevel level = interpreter.interpret(new ScreenBuffer(new char[][]{{'<'}}));
 
         MatcherAssert.assertThat(level.thingAt(new Coordinates(0, 0)), equalTo(STAIRWAY_UP));
     }
 
     @Test
     public void testAddsAMarkerForClosedDoorUpOnTheLevelMap() {
-        NethackLevel level = interpreter.interpret(new char[][]{{'+'}});
+        NethackLevel level = interpreter.interpret(new ScreenBuffer(new char[][]{{'+'}}));
 
         MatcherAssert.assertThat(level.thingAt(new Coordinates(0, 0)), equalTo(CLOSED_DOOR));
     }
@@ -86,6 +87,8 @@ public class NethackScreenBufferInterpreterTest {
                 {'-', '-', '-', '-', '-', '-', '-'},
         };
 
+        ScreenBuffer dungeonRoom = new ScreenBuffer(dungeonRoomBuffer);
+
         DungeonThing[][] expectedInterpretedRoom = new DungeonThing[][]{
                 {HORIZONTAL_WALL, HORIZONTAL_WALL, HORIZONTAL_WALL, HORIZONTAL_WALL, HORIZONTAL_WALL, HORIZONTAL_WALL, HORIZONTAL_WALL},
                 {VERTICAL_WALL, VACANT, VACANT, VACANT, VACANT, VACANT, VERTICAL_WALL},
@@ -94,7 +97,7 @@ public class NethackScreenBufferInterpreterTest {
                 {HORIZONTAL_WALL, HORIZONTAL_WALL, HORIZONTAL_WALL, HORIZONTAL_WALL, HORIZONTAL_WALL, HORIZONTAL_WALL, HORIZONTAL_WALL},
         };
 
-        NethackLevel level = interpreter.interpret(dungeonRoomBuffer);
+        NethackLevel level = interpreter.interpret(dungeonRoom);
         MatcherAssert.assertThat(level.getDungeonMap(), equalTo(expectedInterpretedRoom));
     }
     
@@ -121,6 +124,8 @@ public class NethackScreenBufferInterpreterTest {
 
         };
 
+        ScreenBuffer dungeonRoom = new ScreenBuffer(dungeonRoomBuffer);
+
         DungeonThing[][] expectedInterpretedRoom = new DungeonThing[][]{
                 {HORIZONTAL_WALL, HORIZONTAL_WALL, HORIZONTAL_WALL, HORIZONTAL_WALL, HORIZONTAL_WALL, HORIZONTAL_WALL, HORIZONTAL_WALL},
                 {VERTICAL_WALL, VACANT, VACANT, VACANT, VACANT, VACANT, VERTICAL_WALL},
@@ -130,7 +135,7 @@ public class NethackScreenBufferInterpreterTest {
         };
 
         NethackScreenBufferInterpreter interpreter = new NethackScreenBufferInterpreter();
-        NethackLevel level = interpreter.interpret(dungeonRoomBuffer);
+        NethackLevel level = interpreter.interpret(dungeonRoom);
         MatcherAssert.assertThat(level.getDungeonMap(), equalTo(expectedInterpretedRoom));
     }
 

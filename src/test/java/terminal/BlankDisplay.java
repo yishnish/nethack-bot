@@ -1,6 +1,6 @@
 package terminal;
 
 public class BlankDisplay implements Display {
-    public void display(char[][] chars) {
+    public void display(ScreenBuffer screenBuffer) {
     }
 }

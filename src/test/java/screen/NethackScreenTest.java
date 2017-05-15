@@ -99,13 +99,13 @@ public class NethackScreenTest {
     public void testSuccessfullyGettingALevelReturnsALevelWithTheMostRecentChanges(){
         final long safeInterval = 500L;
         final long lastCheckTime = 1000L;
-        char[][] firstScreen = new char[][]{
+        ScreenBuffer firstScreen = new ScreenBuffer(new char[][]{
                 {'@', '.'}
-        };
+        });
 
-        char[][] updatedScreen = new char[][]{
+        ScreenBuffer updatedScreen = new ScreenBuffer(new char[][]{
                 {'.', '@'}
-        };
+        });
         terminal = mock(VTerminal.class);
         nethackScreen = new NethackScreen(terminal, screenInterpreter);
 

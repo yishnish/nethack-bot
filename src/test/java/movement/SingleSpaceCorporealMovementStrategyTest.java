@@ -7,6 +7,7 @@ import locations.Coordinates;
 import mapitems.DungeonThing;
 import org.junit.Before;
 import org.junit.Test;
+import terminal.ScreenBuffer;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -30,7 +31,7 @@ public class SingleSpaceCorporealMovementStrategyTest {
 
     @Test
     public void givenANethackLevelItShouldProvideAllMovableLocationsWithinDistanceOneOfTheHero() {
-        char[][] dungeonMap = new char[][]{{'@', '.'}};
+        ScreenBuffer dungeonMap = new ScreenBuffer(new char[][]{{'@', '.'}});
         NethackLevel level = screenInterpreter.interpret(dungeonMap);
         DungeonThing[] dungeonThings = new DungeonThing[]{DungeonThing.STAIRWAY_UP};
         for (DungeonThing dungeonThing : dungeonThings) {
@@ -47,7 +48,8 @@ public class SingleSpaceCorporealMovementStrategyTest {
                 {'@', '.', '.'},
         };
 
-        NethackLevel level = screenInterpreter.interpret(heroInCorner);
+        ScreenBuffer screen = new ScreenBuffer(heroInCorner);
+        NethackLevel level = screenInterpreter.interpret(screen);
 
         Set<Coordinates> availableMoveLocations = movementStrategy.getAvailableMoveLocations(level);
         assertThat(availableMoveLocations.size(), equalTo(3));
@@ -61,8 +63,8 @@ public class SingleSpaceCorporealMovementStrategyTest {
                 {'.', '@', '.'},
                 {'.', '.', '.'},
         };
-
-        NethackLevel level = screenInterpreter.interpret(heroInMiddle);
+        ScreenBuffer screen = new ScreenBuffer(heroInMiddle);
+        NethackLevel level = screenInterpreter.interpret(screen);
 
         Set<Coordinates> availableMoveLocations = movementStrategy.getAvailableMoveLocations(level);
         assertThat(availableMoveLocations.size(), equalTo(8));
@@ -76,7 +78,7 @@ public class SingleSpaceCorporealMovementStrategyTest {
 
     @Test
     public void itShouldNotConsiderMovingToUnmovableSpaces() {
-        char[][] dungeonMap = new char[][]{{'@', '.'}};
+        ScreenBuffer dungeonMap = new ScreenBuffer(new char[][]{{'@', '.'}});
         NethackLevel level = screenInterpreter.interpret(dungeonMap);
         DungeonThing[] dungeonThings = new DungeonThing[]{DungeonThing.VERTICAL_WALL, DungeonThing.CLOSED_DOOR};
         for (DungeonThing dungeonThing : dungeonThings) {
@@ -87,7 +89,7 @@ public class SingleSpaceCorporealMovementStrategyTest {
 
     @Test
     public void itShouldConsiderMovingToMovableSpacesAsDefinedByTheStrategy() {
-        char[][] dungeonMap = new char[][]{{'@', '.'}};
+        ScreenBuffer dungeonMap = new ScreenBuffer(new char[][]{{'@', '.'}});
         NethackLevel level = screenInterpreter.interpret(dungeonMap);
         Set<Coordinates> expected = new HashSet<Coordinates>(Arrays.asList(new Coordinates(0, 1)));
         for (DungeonThing dungeonThing : SingleSpaceCorporealMovementStrategy.SAFE_MOVE_SPOTS) {
