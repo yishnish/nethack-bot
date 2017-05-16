@@ -44,19 +44,6 @@ public class NethackBot {
         this.movementFilters.add(movementFilter);
     }
 
-    public Set<Coordinates> getAvailableMoveLocations(NethackLevel level) {
-        return movementStrategy.getAvailableMoveLocations(level);
-    }
-
-    public NethackLevel getLevelFromScreen(NethackScreen nethackScreen) {
-        NethackLevel level;
-        while ((level = nethackScreen.getSuspectedNewAndStableLevel(lastRequestTimestamp,
-                TIME_UNTIL_LEVEL_CONSIDERED_STABLE)) == null) {
-        }
-        lastRequestTimestamp = timePiece.getTimeMillis();
-        return level;
-    }
-
     public NethackCommand getNextMove(NethackLevel level){
         updateVisitedLocationsWithCurrentLocation(level);
         Set<Coordinates> availableMoveLocations = getAvailableMoveLocations(level);
@@ -70,6 +57,19 @@ public class NethackBot {
         Coordinates moveTo = (Coordinates) Arrays.asList(availableMoveLocations.toArray()).get(randomElementPosition);
 
         return NethackCommand.forDelta(level.getHeroLocation().to(moveTo));
+    }
+
+    public NethackLevel getLevelFromScreen(NethackScreen nethackScreen) {
+        NethackLevel level;
+        while ((level = nethackScreen.getSuspectedNewAndStableLevel(lastRequestTimestamp,
+                TIME_UNTIL_LEVEL_CONSIDERED_STABLE)) == null) {
+        }
+        lastRequestTimestamp = timePiece.getTimeMillis();
+        return level;
+    }
+
+    public Set<Coordinates> getAvailableMoveLocations(NethackLevel level) {
+        return movementStrategy.getAvailableMoveLocations(level);
     }
 
     private void updateVisitedLocationsWithCurrentLocation(NethackLevel level) {

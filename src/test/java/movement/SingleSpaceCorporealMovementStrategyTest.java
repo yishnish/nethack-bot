@@ -1,12 +1,12 @@
 package movement;
 
-import screenbufferinterpreter.NethackScreenBufferInterpreter;
-import screenbufferinterpreter.NoLinesScreenTrimmer;
 import level.NethackLevel;
 import locations.Coordinates;
 import mapitems.DungeonThing;
 import org.junit.Before;
 import org.junit.Test;
+import screenbufferinterpreter.NethackScreenBufferInterpreter;
+import screenbufferinterpreter.NoLinesScreenTrimmer;
 import terminal.ScreenBuffer;
 
 import java.util.Arrays;
@@ -14,8 +14,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItems;
 
 public class SingleSpaceCorporealMovementStrategyTest {
 

@@ -15,6 +15,7 @@ import terminal.TimePiece;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItem;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.*;
 
