@@ -13,6 +13,7 @@ public enum DungeonThing {
     CLOSED_DOOR('+'),
     HALLWAY('#'),
     BOULDER('`'),
+    ALTAR('_'),
     GOLD('$'),
     FOOD('%'),
     RING('='),
@@ -29,7 +30,9 @@ public enum DungeonThing {
     CANINE('d'),
     FUNGUS('F'),
     RODENT('r'),
-    FELINE('f');
+    FELINE('f'),
+    KOBOLD('k'),
+    ORC('o');
 
     private static Map<Character, DungeonThing> converter = Collections.unmodifiableMap(initializeMapping());
 
