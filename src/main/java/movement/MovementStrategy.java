@@ -8,4 +8,6 @@ import java.util.Set;
 public interface MovementStrategy {
     Set<Coordinates> getAvailableMoveLocations(NethackLevel level, Coordinates fromPosition);
     Set<Coordinates> getAvailableMoveLocations(NethackLevel level);
+
+    boolean canMoveTo(Coordinates coordinates, NethackLevel level);
 }

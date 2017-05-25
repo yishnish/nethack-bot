@@ -2,7 +2,7 @@ package collections;
 
 import org.junit.Test;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -12,7 +12,7 @@ public class CollectionsHelpersTest {
 
     @Test
     public void testCreatingASetOfThings() {
-        Set<String> same = new HashSet<String>();
+        Set<String> same = new LinkedHashSet<String>();
         same.add("hello");
         same.add("world");
         same.add("!");
@@ -23,7 +23,7 @@ public class CollectionsHelpersTest {
 
     @Test
     public void testCreatingASetOfOneThing(){
-        Set<Integer> same = new HashSet<Integer>();
+        Set<Integer> same = new LinkedHashSet<Integer>();
         same.add(69);
         Set<Integer> set = CollectionsHelpers.setOf(69);
 

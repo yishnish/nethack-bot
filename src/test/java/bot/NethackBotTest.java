@@ -1,21 +1,19 @@
 package bot;
 
 import command.NethackCommand;
-import movement.PrioritizeNewLocationsFilter;
-import movement.SingleSpaceCorporealMovementStrategy;
-import screenbufferinterpreter.NethackScreenBufferInterpreter;
-import screenbufferinterpreter.NoLinesScreenTrimmer;
 import level.NethackLevel;
 import locations.Coordinates;
+import movement.PrioritizeNewLocationsFilter;
 import org.junit.Before;
 import org.junit.Test;
 import screen.NethackScreen;
+import screenbufferinterpreter.NethackScreenBufferInterpreter;
+import screenbufferinterpreter.NoLinesScreenTrimmer;
 import terminal.ScreenBuffer;
 import terminal.TimePiece;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasItem;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.*;
 
@@ -56,13 +54,6 @@ public class NethackBotTest {
     }
 
     @Test
-    public void nethackBotCanChooseLocationsToMoveTo() {
-        ScreenBuffer screenBuffer = new ScreenBuffer(new char[][]{{'@', '.'}});
-        NethackLevel level = screenInterpreter.interpret(screenBuffer);
-        assertThat(nethackBot.getAvailableMoveLocations(level), hasItem(new Coordinates(0, 1)));
-    }
-
-    @Test
     public void givenALevelYouShouldBeAbleToAskNethackBotForTheNextMoveItWantsToMake(){
         ScreenBuffer screen = new ScreenBuffer(new char[][]{{'@', '.'}});
         NethackLevel level = screenInterpreter.interpret(screen);
@@ -91,7 +82,7 @@ public class NethackBotTest {
         movementFilter.markVisited(topRight);
         movementFilter.markVisited(bottomLeft);
 
-        nethackBot = new NethackBot(timePiece, new SingleSpaceCorporealMovementStrategy(), movementFilter);
+        nethackBot = new NethackBot(timePiece, movementFilter);
         NethackCommand nextMove = nethackBot.getNextMove(level);
 
         assertThat(nextMove, equalTo(NethackCommand.MOVE_DOWN_RIGHT));

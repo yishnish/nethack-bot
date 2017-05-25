@@ -5,9 +5,10 @@ import locations.Coordinates;
 import mapitems.DungeonThing;
 
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
 
 public class SingleSpaceCorporealMovementStrategy implements MovementStrategy {
     private static final int BASIC_MOVE_DX = 1;
@@ -26,7 +27,7 @@ public class SingleSpaceCorporealMovementStrategy implements MovementStrategy {
         int levelRows = level.getNumRows();
         int levelColumns = level.getNumColumns();
 
-        Set<Coordinates> placesToMoveTo = new HashSet<Coordinates>();
+        Set<Coordinates> placesToMoveTo = new LinkedHashSet<>();
         for (int dx = BASIC_MOVE_DX * (-1); dx <= BASIC_MOVE_DX; dx++) {
             for (int dy = BASIC_MOVE_DY * (-1); dy <= BASIC_MOVE_DY; dy++) {
                 int potentialRow = Math.max(0, Math.min(levelRows - 1, fromPosition.getRow() + dy));
@@ -39,5 +40,11 @@ public class SingleSpaceCorporealMovementStrategy implements MovementStrategy {
         }
         placesToMoveTo.remove(fromPosition);
         return placesToMoveTo;
+    }
+
+    @Override
+    public boolean canMoveTo(Coordinates coordinates, NethackLevel level) {
+        DungeonThing o = level.thingAt(coordinates);
+        return SAFE_MOVE_SPOTS.contains(o);
     }
 }

@@ -28,10 +28,10 @@ public class PrioritizeNewLocationsFilterTest {
         for (Coordinates coordinates : visited) {
             filter.markVisited(coordinates);
         }
-        Set<Coordinates> moveLocationCandidates = new HashSet<Coordinates>(Arrays.asList(once, twice));
+        Set<Coordinates> moveLocationCandidates = new LinkedHashSet<Coordinates>(Arrays.asList(once, twice));
 
         assertThat(filter.filter(moveLocationCandidates),
-                equalTo(((Set<Coordinates>)(new HashSet<Coordinates>(singletonList(once))))));
+                equalTo(((Set<Coordinates>)(new LinkedHashSet<Coordinates>(singletonList(once))))));
     }
 
     @Test
@@ -43,9 +43,9 @@ public class PrioritizeNewLocationsFilterTest {
         for (Coordinates coordinates : visited) {
             filter.markVisited(coordinates);
         }
-        Set<Coordinates> moveLocationCandidates = new HashSet<Coordinates>(Arrays.asList(twiceOne, twiceTwo));
+        Set<Coordinates> moveLocationCandidates = new LinkedHashSet<Coordinates>(Arrays.asList(twiceOne, twiceTwo));
 
         assertThat(filter.filter(moveLocationCandidates),
-                equalTo(((Set<Coordinates>)(new HashSet<Coordinates>(Arrays.asList(twiceOne, twiceTwo))))));
+                equalTo(((Set<Coordinates>)(new LinkedHashSet<Coordinates>(Arrays.asList(twiceOne, twiceTwo))))));
     }
 }

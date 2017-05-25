@@ -3,15 +3,19 @@ package bot;
 import command.NethackCommand;
 import level.NethackLevel;
 import locations.Coordinates;
+import locations.MoveDelta;
+import mapitems.DungeonThing;
 import movement.ActionFilter;
-import movement.MovementStrategy;
+import movement.DungeonLevelItemsFinder;
+import movement.Pathfinder;
 import movement.PrioritizeNewLocationsFilter;
-import movement.SingleSpaceCorporealMovementStrategy;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import screen.NethackScreen;
 import terminal.TimePiece;
 
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class NethackBot {
@@ -22,41 +26,45 @@ public class NethackBot {
 
     private long lastRequestTimestamp = 0L;
 
-    private MovementStrategy movementStrategy;
+    private Set<ActionFilter<Coordinates>> movementFilters = new LinkedHashSet<>();
 
-    private Set<ActionFilter<Coordinates>> movementFilters = new HashSet<ActionFilter<Coordinates>>();
+    private Logger logger = LogManager.getLogger(NethackBot.class);
 
     public NethackBot(TimePiece timePiece) {
-        this(timePiece, new SingleSpaceCorporealMovementStrategy());
-    }
-
-    public NethackBot(TimePiece timePiece, MovementStrategy movementStrategy) {
         this.timePiece = timePiece;
-        this.movementStrategy = movementStrategy;
     }
 
     public NethackBot(TimePiece timePiece,
-                      MovementStrategy movementStrategy,
                       PrioritizeNewLocationsFilter movementFilter) {
 
         this.timePiece = timePiece;
-        this.movementStrategy = movementStrategy;
         this.movementFilters.add(movementFilter);
     }
 
     public NethackCommand getNextMove(NethackLevel level){
-        updateVisitedLocationsWithCurrentLocation(level);
+        notifyFiltersOfCurrentLevelState(level);
+
         Set<Coordinates> availableMoveLocations = getAvailableMoveLocations(level);
+
+        availableMoveLocations = filterMovementOptions(availableMoveLocations);
+
         if (availableMoveLocations.size() == 0) {
             return NethackCommand.WAIT;
         }
-        for (ActionFilter<Coordinates> filter : movementFilters) {
-            availableMoveLocations = filter.filter(availableMoveLocations);
-        }
-        int randomElementPosition = (int) (Math.floor(availableMoveLocations.size() * Math.random()));
-        Coordinates moveTo = (Coordinates) Arrays.asList(availableMoveLocations.toArray()).get(randomElementPosition);
 
-        return NethackCommand.forDelta(level.getHeroLocation().to(moveTo));
+        //locations should be able to be anywhere on the map, so next step is to build a path to the location
+        //e.g. new Pathfinder().findPath(randomElementPosition, level)
+        //below step is just to grab the first location from the path, assuming it is ordered by distance from hero
+        Coordinates moveTo = chooseDestination(availableMoveLocations);
+
+        Set<Coordinates> path = (new Pathfinder()).getPath(level.getHeroLocation(), moveTo, level);
+
+        MoveDelta moveDelta = level.getHeroLocation().to((Coordinates) path.toArray()[0]);
+        NethackCommand command = NethackCommand.forDelta(moveDelta);
+
+        logger.debug("Moving hero from " + level.getHeroLocation() + " to " + path.toArray()[0]  + " in order to follow path " + path);
+
+        return command;
     }
 
     public NethackLevel getLevelFromScreen(NethackScreen nethackScreen) {
@@ -68,11 +76,23 @@ public class NethackBot {
         return level;
     }
 
-    public Set<Coordinates> getAvailableMoveLocations(NethackLevel level) {
-        return movementStrategy.getAvailableMoveLocations(level);
+    private Coordinates chooseDestination(Set<Coordinates> availableMoveLocations) {
+        int randomElementPosition = (int) (Math.floor(availableMoveLocations.size() * Math.random()));
+        return (Coordinates) Arrays.asList(availableMoveLocations.toArray()).get(randomElementPosition);
     }
 
-    private void updateVisitedLocationsWithCurrentLocation(NethackLevel level) {
+    private Set<Coordinates> getAvailableMoveLocations(NethackLevel level) {
+        return (new DungeonLevelItemsFinder()).findAll(DungeonThing.VACANT, level);
+    }
+
+    private Set<Coordinates> filterMovementOptions(Set<Coordinates> availableMoveLocations) {
+        for (ActionFilter<Coordinates> filter : movementFilters) {
+            availableMoveLocations = filter.filter(availableMoveLocations);
+        }
+        return availableMoveLocations;
+    }
+
+    private void notifyFiltersOfCurrentLevelState(NethackLevel level) {
         for (ActionFilter<Coordinates> movementFilter : movementFilters) {
             movementFilter.markVisited(level.getHeroLocation());
         }

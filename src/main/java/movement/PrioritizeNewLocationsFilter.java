@@ -3,7 +3,7 @@ package movement;
 import collections.DefaultValueHashMap;
 import locations.Coordinates;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -19,7 +19,7 @@ public class PrioritizeNewLocationsFilter implements ActionFilter<Coordinates> {
     public Set<Coordinates> filter(Set<Coordinates> moveLocationCandidates) {
         Integer minVisited = findLeastVisitedValue(moveLocationCandidates);
 
-        Set<Coordinates> filtered = new HashSet<Coordinates>();
+        Set<Coordinates> filtered = new LinkedHashSet<>();
         for (Coordinates coordinates : moveLocationCandidates) {
             if (visited.get(coordinates).equals(minVisited)) {
                 filtered.add(coordinates);

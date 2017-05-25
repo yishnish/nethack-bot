@@ -15,8 +15,7 @@ import static locations.Coordinates.coordinates;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 
 public class PathfinderTest {
 
@@ -67,19 +66,44 @@ public class PathfinderTest {
     @Test
     public void testIfMultipleShortestPathsOfTheSameLengthExistItReturnsEitherOne() {
         char[][] screen = new char[][]{
-                {'@', '.', '.'},
-                {'.', '.', '.'},
-                {'.', '.', '.'},
+                {'@', '.', '.', '.'},
+                {'.', '.', '.', '.'},
+                {'.', '.', '.', '.'},
+        };
+        NethackLevel level = new NethackScreenBufferInterpreter(new NoLinesScreenTrimmer()).interpret(new ScreenBuffer(screen));
+        Pathfinder pathfinder = new Pathfinder();
+        Set<Coordinates> path = pathfinder.getPath(coordinates(0, 0), coordinates(2, 3), level);
+
+        Set<Coordinates> shortestOne = setOf(coordinates(1, 1), coordinates(1, 2), coordinates(2, 3));
+        Set<Coordinates> shortestTwo = setOf(coordinates(1, 1), coordinates(2, 2), coordinates(2, 3));
+
+        assertThat(asList(shortestOne, shortestTwo), hasItem(path));
+    }
+
+    @Test
+    public void testFindsAPathInAReasonableAmountOfTime() {
+        char[][] screen = new char[][]{
+                {'@', '.', '.','.','.','.','.','.','.',},
+                {'.', '.', '.','.','.','.','.','.','.',},
+                {'.', '.', '.','.','.','.','.','.','.',},
+                {'.', '.', '.','.','.','.','.','.','.',},
+                {'.', '.', '.','.','.','.','.','.','.',},
+                {'.', '.', '.','.','.','.','.','.','.',},
+                {'.', '.', '.','.','.','.','.','.','.',},
         };
         NethackLevel level = new NethackScreenBufferInterpreter(new NoLinesScreenTrimmer()).interpret(new ScreenBuffer(screen));
         level.setHeroLocation(coordinates(0, 0));
         Pathfinder pathfinder = new Pathfinder();
-        Set<Coordinates> path = pathfinder.getPath(coordinates(0, 0), coordinates(2, 1), level);
 
-        Set<Coordinates> shortestOne = setOf(coordinates(1, 0), coordinates(2, 1));
-        Set<Coordinates> shortestTwo = setOf(coordinates(1, 1), coordinates(2, 1));
+        long startTime = System.currentTimeMillis();
 
-        assertThat(asList(shortestOne, shortestTwo), hasItem(path));
+        pathfinder.getPath(coordinates(0, 0), coordinates(6, 8), level);
+
+        long stopTime = System.currentTimeMillis();
+
+        long acceptableTime = 200L;
+
+        assertThat(stopTime - startTime, lessThan(acceptableTime));
     }
 
     @Test
