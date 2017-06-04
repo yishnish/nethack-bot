@@ -32,6 +32,7 @@ public enum DungeonThing {
     RODENT('r'),
     FELINE('f'),
     KOBOLD('k'),
+    ZOMBIE('Z'),
     ORC('o');
 
     private static Map<Character, DungeonThing> converter = Collections.unmodifiableMap(initializeMapping());

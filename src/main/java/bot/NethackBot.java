@@ -18,6 +18,8 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import static collections.CollectionsHelpers.setOf;
+
 public class NethackBot {
 
     public static final long TIME_UNTIL_LEVEL_CONSIDERED_STABLE = 500L;
@@ -27,6 +29,8 @@ public class NethackBot {
     private long lastRequestTimestamp = 0L;
 
     private Set<ActionFilter<Coordinates>> movementFilters = new LinkedHashSet<>();
+
+    private Coordinates destination = Coordinates.UNKNOWN;
 
     private Logger logger = LogManager.getLogger(NethackBot.class);
 
@@ -57,12 +61,16 @@ public class NethackBot {
         //below step is just to grab the first location from the path, assuming it is ordered by distance from hero
         Coordinates moveTo = chooseDestination(availableMoveLocations);
 
+        this.destination = moveTo;
+
         Set<Coordinates> path = (new Pathfinder()).getPath(level.getHeroLocation(), moveTo, level);
+
+        if (path.size() == 0) {
+            return NethackCommand.WAIT;
+        }
 
         MoveDelta moveDelta = level.getHeroLocation().to((Coordinates) path.toArray()[0]);
         NethackCommand command = NethackCommand.forDelta(moveDelta);
-
-        logger.debug("Moving hero from " + level.getHeroLocation() + " to " + path.toArray()[0]  + " in order to follow path " + path);
 
         return command;
     }
@@ -82,7 +90,9 @@ public class NethackBot {
     }
 
     private Set<Coordinates> getAvailableMoveLocations(NethackLevel level) {
-        return (new DungeonLevelItemsFinder()).findAll(DungeonThing.VACANT, level);
+        if (destination == Coordinates.UNKNOWN || destination.equals(level.getHeroLocation())) {
+            return (new DungeonLevelItemsFinder()).findAll(DungeonThing.VACANT, level);
+        } else return setOf(destination);
     }
 
     private Set<Coordinates> filterMovementOptions(Set<Coordinates> availableMoveLocations) {
@@ -96,5 +106,9 @@ public class NethackBot {
         for (ActionFilter<Coordinates> movementFilter : movementFilters) {
             movementFilter.markVisited(level.getHeroLocation());
         }
+    }
+
+    public Coordinates getDestination() {
+        return destination;
     }
 }

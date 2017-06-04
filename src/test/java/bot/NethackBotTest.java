@@ -12,6 +12,7 @@ import screenbufferinterpreter.NoLinesScreenTrimmer;
 import terminal.ScreenBuffer;
 import terminal.TimePiece;
 
+import static locations.Coordinates.coordinates;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.anyLong;
@@ -73,7 +74,6 @@ public class NethackBotTest {
         PrioritizeNewLocationsFilter movementFilter = new PrioritizeNewLocationsFilter();
         Coordinates topRight = new Coordinates(0, 1);
         Coordinates bottomLeft = new Coordinates(1, 0);
-        Coordinates bottomRight = new Coordinates(1, 1);
 
         /**
          *  [@, 1]
@@ -87,23 +87,58 @@ public class NethackBotTest {
 
         assertThat(nextMove, equalTo(NethackCommand.MOVE_DOWN_RIGHT));
 
-        /**
-         *  [@, 1]
-         *  [2, 2]
-         */
-        movementFilter.markVisited(bottomRight);
-        movementFilter.markVisited(bottomRight);
-        movementFilter.markVisited(bottomLeft);
-
-        assertThat(nethackBot.getNextMove(level), equalTo(NethackCommand.MOVE_RIGHT));
     }
 
     @Test
     public void ifThereIsNowhereToMoveNethackBotWillWaitATurn(){
-        NethackLevel level = screenInterpreter.interpret(new ScreenBuffer(new char[][]{
+        NethackLevel levelWithNoOpenSpaces = screenInterpreter.interpret(new ScreenBuffer(new char[][]{
                 {'@', '+'}
         }));
+        NethackLevel levelWithBlockedPath = screenInterpreter.interpret(new ScreenBuffer(new char[][]{
+                {'@', '+', '.'}
+        }));
+        assertThat(nethackBot.getNextMove(levelWithNoOpenSpaces), equalTo(NethackCommand.WAIT));
+        assertThat(nethackBot.getNextMove(levelWithBlockedPath), equalTo(NethackCommand.WAIT));
+    }
 
-        assertThat(nethackBot.getNextMove(level), equalTo(NethackCommand.WAIT));
+    @Test
+    public void netHackBotShouldRememberWhereItIsGoingTo() {
+        NethackLevel level = screenInterpreter.interpret(new ScreenBuffer(new char[][]{
+                {'@', '.'}
+        }));
+        assertThat(nethackBot.getDestination(), equalTo(Coordinates.UNKNOWN));
+        nethackBot.getNextMove(level);
+        assertThat(nethackBot.getDestination(), equalTo(coordinates(0, 1)));
+    }
+
+    @Test
+    public void testNethackBotShouldKeepTryingToMoveToItsDestination(){
+        NethackLevel levelBeforeFirstMove = screenInterpreter.interpret(new ScreenBuffer(new char[][]{
+                {'@', 'B', '.'}
+        }));
+        nethackBot.getNextMove(levelBeforeFirstMove);
+        Coordinates originalDestination = coordinates(0, 2);
+        assertThat(nethackBot.getDestination(), equalTo(originalDestination));
+        NethackLevel levelBeforeNextMove = screenInterpreter.interpret(new ScreenBuffer(new char[][]{
+                {'.', '@', '.'}
+        }));
+        nethackBot.getNextMove(levelBeforeNextMove);
+        assertThat(nethackBot.getDestination(), equalTo(originalDestination));
+    }
+
+    @Test
+    public void nethackBotShouldPickANewDestinationAfterArrival(){
+        NethackLevel levelBeforeFirstMove = screenInterpreter.interpret(new ScreenBuffer(new char[][]{
+                {'@', '.'}
+        }));
+        nethackBot.getNextMove(levelBeforeFirstMove);
+        Coordinates destination = coordinates(0, 1);
+        assertThat(nethackBot.getDestination(), equalTo(destination));
+        NethackLevel levelAfterMove = screenInterpreter.interpret(new ScreenBuffer(new char[][]{
+                {'.', '@'}
+        }));
+        nethackBot.getNextMove(levelAfterMove);
+        Coordinates nextDestination = coordinates(0, 0);
+        assertThat(nethackBot.getDestination(), equalTo(nextDestination));
     }
 }
